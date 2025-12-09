@@ -18,6 +18,24 @@ void AMyPawn::BeginPlay()
 	
 	//调用事件函数，启动后先调用TestAA事件，调用蓝图中连接的节点，然后再执行实现的TestAA_Implementation方法
 	TestAB();
+
+	TSubclassOf<UMyObject> MySubClassObject = UMyObject::StaticClass();
+	MyTestObject = NewObject<UMyObject>(GetWorld(), MySubClassObject);
+	if (MyTestObject)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MyTestObject is %s"), *MyTestObject->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("MyTestObject Health is %f"), MyTestObject->MyDataTableStruct.Health);
+		UE_LOG(LogTemp, Warning, TEXT("MyTestObject Name is %s"), *MyTestObject->MyDataTableStruct.Name);
+		UE_LOG(LogTemp, Warning, TEXT("MyTestObject level is %f"), MyTestObject->MyDataTableStruct.level);
+	}
+
+	MyInstance = Cast<UMyGameInstance>(GetWorld()->GetFirstPlayerController()->GetGameInstance());
+	if (MyInstance) {
+		UE_LOG(LogTemp, Warning, TEXT("MyInstance is %s"), *MyInstance->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("MyInstance MyAppID is %s"), *MyInstance->MyAppID);
+		UE_LOG(LogTemp, Warning, TEXT("MyInstance MyUserID is %s"), *MyInstance->MyUserID);
+		UE_LOG(LogTemp, Warning, TEXT("MyInstance MyName is %s"), *MyInstance->MyName);
+	}
 }
 
 // Called every frame

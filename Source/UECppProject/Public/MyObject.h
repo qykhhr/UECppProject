@@ -12,13 +12,15 @@ USTRUCT(BlueprintType)
 struct FMyDataTableStruct : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
+
+	FMyDataTableStruct();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyTestDataTableStruct")
 		float Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyTestDataTableStruct")
 		FString Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyTestDataTableStruct")
 		int32 level;
-
 };
 /**
  * 
@@ -28,4 +30,7 @@ class UECPPPROJECT_API UMyObject : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY()
+	FMyDataTableStruct MyDataTableStruct;
 };

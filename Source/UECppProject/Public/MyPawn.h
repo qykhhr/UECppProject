@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "MyObject.h"
+#include "MyGameInstance.h"
 #include "MyPawn.generated.h"
 
 UENUM(BlueprintType)
@@ -160,4 +162,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyExposeOnSpawn", meta = (ExposeOnSpawn = "ExposeOnSpawnValue"))
 		float MyHealth;
+
+	UPROPERTY()
+		UMyObject* MyTestObject;
+
+	UPROPERTY()
+		UMyGameInstance* MyInstance;
 };
