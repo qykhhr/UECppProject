@@ -40,4 +40,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MySceneComponent")
 		class UAudioComponent* MyAudio;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyClass")
+		TSubclassOf<AActor> MyActor;
 };

@@ -20,12 +20,28 @@ AMyActor::AMyActor()
 	MyParticle->SetupAttachment(MyScene);
 	MyBox->SetupAttachment(MyScene);
 	MyAudio->SetupAttachment(MyBox);
+
+	//静态加载资源
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> TempStaticMesh(TEXT("StaticMesh'/Game/StarterContent/Architecture/Floor_400x400.Floor_400x400'"));
+	MyMesh->SetStaticMesh(TempStaticMesh.Object);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> TempParticleSystem(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+	MyParticle->SetTemplate(TempParticleSystem.Object);
+	static ConstructorHelpers::FObjectFinder<USoundWave> TempSound(TEXT("SoundWave'/Game/StarterContent/Audio/Collapse01.Collapse01'"));
+	MyAudio->SetSound(TempSound.Object);
+
+	//静态加载类
+	static ConstructorHelpers::FClassFinder<AActor> TempMyActor(TEXT("Blueprint'/Game/StarterContent/Blueprints/Blueprint_CeilingLight.Blueprint_CeilingLight_C'"));
+	MyActor = TempMyActor.Class;
 }
 
 // Called when the game starts or when spawned
 void AMyActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (MyActor) {
+		UE_LOG(LogTemp, Warning, TEXT("MyActor is %s"), *MyActor->GetName());
+	}
 	
 }
 
