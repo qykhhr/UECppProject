@@ -43,6 +43,20 @@ void AMyActor::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("MyActor is %s"), *MyActor->GetName());
 	}
 	
+	//动态加载资源
+	UStaticMesh* MyTempStaticMesh = LoadObject<UStaticMesh>(nullptr, TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
+	if (MyTempStaticMesh) {
+		MyMesh->SetStaticMesh(MyTempStaticMesh);
+	}
+
+	//动态加载类资源
+	UClass* MyTempClass = LoadClass<AActor>(this, TEXT("Blueprint'/Game/StarterContent/Blueprints/Blueprint_WallSconce.Blueprint_WallSconce_C'"));
+	if (MyTempClass)
+	{
+		AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(MyTempClass, FVector::ZeroVector, FRotator::ZeroRotator);
+
+	}
+
 }
 
 // Called every frame
