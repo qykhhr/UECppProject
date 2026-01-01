@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
 #include "MyObject.h"
 #include "MyGameInstance.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 #include "MyPawn.generated.h"
 
 UENUM(BlueprintType)
@@ -168,4 +170,17 @@ public:
 
 	UPROPERTY()
 		UMyGameInstance* MyInstance;
+
+public:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "MySceneComponent")
+	USceneComponent* MyRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MySceneComponent")
+	USpringArmComponent* MySpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MySceneComponent")
+	UCameraComponent* MyCamera;
+
+	//鼠标滑轮移动镜头缩放
+	void Zoom(bool Direction, float ZoomSpeed);
 };

@@ -9,6 +9,16 @@ AMyPawn::AMyPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//创建3个组件，分别是场景、摄像机摇臂、相机
+	MyRoot = CreateDefaultSubobject<USceneComponent>(TEXT("MyRootComponent"));
+	MySpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MySpringArmComponent"));
+	MyCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("MyCameraComponent"));
+	//构建父子级关系
+	RootComponent = MyRoot;
+	MySpringArm->SetupAttachment(MyRoot);
+	MyCamera->SetupAttachment(MySpringArm);
+
+	MySpringArm->bDoCollisionTest = false;//关闭碰撞测试，设置没有碰撞
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +46,14 @@ void AMyPawn::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("MyInstance MyUserID is %s"), *MyInstance->MyUserID);
 		UE_LOG(LogTemp, Warning, TEXT("MyInstance MyName is %s"), *MyInstance->MyName);
 	}
+
+	//设置相机的位移、旋转、缩放
+	FVector MyLocation = FVector(0, 0, 0);
+	FRotator MyRotation = FRotator(-50, 0, 0);
+	FVector MyScale = FVector(1, 1, 1);
+	SetActorLocation(MyLocation);
+	SetActorRotation(MyRotation);
+	SetActorScale3D(MyScale);
 }
 
 // Called every frame
@@ -82,4 +100,24 @@ int AMyPawn::TestD_Implementation(const FString& str)
 
 void AMyPawn::PrintTest()
 {
+}
+
+void AMyPawn::Zoom(bool Direction, float ZoomSpeed)
+{
+	if (Direction)
+	{
+		if (MySpringArm->TargetArmLength >= 300 && MySpringArm->TargetArmLength < 5000)
+		{
+			MySpringArm->TargetArmLength += (ZoomSpeed * 2);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,FString::Printf(TEXT("SpringArmLength is %f"), MySpringArm->TargetArmLength));
+		}
+	}
+	else
+	{
+		if (MySpringArm->TargetArmLength > 300 && MySpringArm->TargetArmLength <= 5000)
+		{
+			MySpringArm->TargetArmLength -= (ZoomSpeed * 2);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("SpringArmLength is %f"), MySpringArm->TargetArmLength));
+		}
+	}
 }

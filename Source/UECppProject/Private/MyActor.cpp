@@ -32,12 +32,43 @@ AMyActor::AMyActor()
 	//静态加载类
 	static ConstructorHelpers::FClassFinder<AActor> TempMyActor(TEXT("Blueprint'/Game/StarterContent/Blueprints/Blueprint_CeilingLight.Blueprint_CeilingLight_C'"));
 	MyActor = TempMyActor.Class;
+
+
+	//碰撞设置
+	//MyBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MyBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	//MyBox->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	//MyBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	//碰撞对象类型
+	//MyBox->SetCollisionObjectType(ECC_WorldStatic);
+	MyBox->SetCollisionObjectType(ECC_WorldDynamic);
+	//MyBox->SetCollisionObjectType(ECC_Pawn);
+	//MyBox->SetCollisionObjectType(ECC_PhysicsBody);
+	//MyBox->SetCollisionObjectType(ECC_Vehicle);
+	//MyBox->SetCollisionObjectType(ECC_Destructible);
+
+	//碰撞响应
+	//MyBox->SetCollisionResponseToAllChannels(ECR_Block); //对所有的通道进行设置响应为Block，阻挡
+	MyBox->SetCollisionResponseToAllChannels(ECR_Overlap); //对所有的通道进行设置响应为Overlap，重叠
+	//MyBox->SetCollisionResponseToAllChannels(ECR_Ignore); //忽略
+	//MyBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);//对单个通道设置响应
+	//MyBox->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);//
+	//MyBox->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+
+	//设置Box大小
+	MyBox->SetBoxExtent(FVector(64, 64, 64));
 }
 
 // Called when the game starts or when spawned
 void AMyActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//默认粒子不激活
+	if (MyParticle) {
+		MyParticle->Deactivate();
+	}
 
 	if (MyActor) {
 		UE_LOG(LogTemp, Warning, TEXT("MyActor is %s"), *MyActor->GetName());
@@ -57,12 +88,46 @@ void AMyActor::BeginPlay()
 
 	}
 
+
+	//动态绑定BeginOverlap和EndOverlap
+	MyBox->OnComponentBeginOverlap.AddDynamic(this,&AMyActor::BeginOverlapFunction);
+	MyBox->OnComponentEndOverlap.AddDynamic(this, &AMyActor::EndOverlapFunction);
+	MyBox->OnComponentHit.AddDynamic(this, &AMyActor::HitFunction);
 }
+
 
 // Called every frame
 void AMyActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector MyOffset = FVector(1, 0, 0);
+	FHitResult HitResult; //碰撞信息
+	//添加Actor的本地坐标偏移
+	AddActorLocalOffset(MyOffset, false, &HitResult);
+
+	//添加Actor的世界坐标偏移
+	//AddActorWorldOffset(MyOffset, false, &HitResult);
+}
+
+void AMyActor::BeginOverlapFunction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (MyParticle) {
+		MyParticle->Activate();
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("BeginOverlapEvent is success!"));
+}
+
+void AMyActor::EndOverlapFunction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (MyParticle) {
+		MyParticle->Deactivate();
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("EndOverlapEvent is success!"));
+}
+
+void AMyActor::HitFunction(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("HitFunction is success!"));
 }
 
